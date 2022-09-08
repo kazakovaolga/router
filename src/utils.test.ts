@@ -64,12 +64,12 @@ describe("public interface", () => {
         const el = await createImage(article, "/contacts")();
         expect(el.id).toBe('root');
         const url = 'https:\/\/purr.objects-us-east-1.dream.io\/i\/win_20150714_153831.jpg'
-        let img = el.innerHTML;
+        const img = el.innerHTML;
         expect(img).toEqual(`<img src="${url}">`);
     });
 
     it("check leave url text", () => {
-        let content = '/contacts'
+        const content = '/contacts'
         const args=[{currentPath: '/about', previousPath: content}]
         const el = leftPage(footer, content)();
         expect(el.innerHTML).toBe(`<h2>You have left the page ${content}</h2>`);

@@ -3,8 +3,8 @@ import { Content } from "./types";
 
 async function getImage() {
     const url = `https://aws.random.cat/meow`;
-    let response = await fetch(url);    
-    let json = await response.json();
+    const response = await fetch(url);    
+    const json = await response.json();
     console.log('json=', json);
     return json;
 };
@@ -16,7 +16,7 @@ export const createLogger = (el: HTMLElement, content: string) => () => {
 }
 
 export const createImage = (el: HTMLElement, content: string) => async() => {    
-    let src=await getImage();
+    const src=await getImage();
     el.innerHTML = `<img src="${src.file}">`;
     return el;
 };

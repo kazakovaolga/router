@@ -32,12 +32,12 @@ describe("public interface", () => {
     it("check router on and go", () => {        
         const root = document.createElement('article');
         root.id = 'root';
-        let header = document.createElement("header");
+        const header = document.createElement("header");
         header.className = 'header';
-        let footer = document.createElement('footer');
+        const footer = document.createElement('footer');
         footer.id = 'footer';
 
-        let listeners = router.on(
+        const listeners = router.on(
             (path: string) => path === "/contacts",
             createLogger(header, "/contacts"),            
             createImage(root, "/contacts"), // onEnter            
