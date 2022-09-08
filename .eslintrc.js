@@ -19,6 +19,7 @@ module.exports = {
   rules: {
     "no-console": "off",
     "jest/valid-title": "off",
+    "jest/valid-expect": "off",
     "import/prefer-default-export": "off",
     "no-alert": "off",
     "no-restricted-globals": "off",
