@@ -1,28 +1,45 @@
-import {createLogger,createImage,leftPage} from "./utils";
-
+import { Router } from "./router";
+import { createLogger, createImage, leftPage } from "./utils";
 
 describe("public interface", () => {
-    let body:HTMLElement;
-    let header:HTMLHeadElement;
-    let article:HTMLElement;
-    let footer:HTMLElement;
+    const router = Router();
+    let body: HTMLElement;
+    let header: HTMLHeadElement;
+    let article: HTMLElement;
+    let footer: HTMLElement;
+    const unmockedFetch = global.fetch;
 
     beforeEach(() => {
-        body=document.createElement("body");
-        header=document.createElement("header");
-        header.className='header';
-        article=document.createElement("article");
-        article.id="root";
-        footer=document.createElement("footer");
-        footer.id="footer";
-
+        body = document.createElement("body");
+        header = document.createElement("header");
+        header.className = 'header';
+        article = document.createElement("article");
+        article.id = "root";
+        footer = document.createElement("footer");
+        footer.id = "footer";
 
         body.appendChild(header);
         body.appendChild(article);
         body.appendChild(footer);
 
+        function mockResponse() {
+            return new Promise((resolve) => {
+                resolve({
+                    ok: true,
+                    status: 200,
+                    json: () => {
+                        return { file: "https:\/\/purr.objects-us-east-1.dream.io\/i\/win_20150714_153831.jpg" };
+                    },
+                });
+            });
+        };
+        global.fetch = jest.fn().mockImplementation(mockResponse);
     });
-    
+
+    afterEach(() => {
+        global.fetch = unmockedFetch;
+    });
+
     it("is a functions", () => {
         expect(createLogger).toBeInstanceOf(Function);
         expect(createImage).toBeInstanceOf(Function);
@@ -30,49 +47,31 @@ describe("public interface", () => {
     });
 
 
-    it("check header color change", async() => {        
-        // console.log('header 1=',header);
-        header.style.backgroundColor="rgb(255, 255, 255)";
-        const color=header.style.backgroundColor;
-        // console.log('color=',color);
+    it("check header color change", async () => {
+        header.style.backgroundColor = "rgb(255, 255, 255)";
+        const color = header.style.backgroundColor;
 
         expect(header).toBeInstanceOf(HTMLElement);
         expect(color).toBe("rgb(255, 255, 255)");
 
-        createLogger(header,"/contacts")();
-        //createLogger(header);
-        // console.log('header 2=',header);
-
-        const colorChange=header.style.backgroundColor;
-        // console.log('typeof colorChange=',typeof(colorChange));
-        // console.log('colorChange=',colorChange);
+        createLogger(header, "/contacts")();
+        const colorChange = header.style.backgroundColor;
         expect(header).toBeInstanceOf(HTMLElement);
-        expect(color!==colorChange).toBeTruthy();
+        expect(color !== colorChange).toBeTruthy();
     });
 
-    it("check header color change", async() => {        
-        console.log('article 1=',article);        
-        const img=article.innerHTML;
-        console.log('img=',img);
-
-        expect(article).toBeInstanceOf(HTMLElement);        
-
-        createImage(article,"/contacts")();        
-        //createImage(article),
-        console.log('article 2=',article);
-
-        // let imgChange=article.innerHTML;        
-        // console.log('imgChange=',imgChange);        
-        // expect(img!==imgChange).toBeTruthy();
+    it("check src img", async () => {
+        const el = await createImage(article, "/contacts")();
+        expect(el.id).toBe('root');
+        const url = 'https:\/\/purr.objects-us-east-1.dream.io\/i\/win_20150714_153831.jpg'
+        let img = el.innerHTML;
+        expect(img).toEqual(`<img src="${url}">`);
     });
 
-    
-//     it("check header color change", () => {   
-//         let content='/contacts'     
-//         let args=leftPage(footer,content);
-//         // console.log('header 2=',header);
-//         expect(footer.innerHTML).toBe(`<h2>You have left the page ${content} args=${JSON.stringify(
-//             args
-//         )}</h2>`);        
-//     });
+    it("check leave url text", () => {
+        let content = '/contacts'
+        const args=[{currentPath: '/about', previousPath: content}]
+        const el = leftPage(footer, content)();
+        expect(el.innerHTML).toBe(`<h2>You have left the page ${content}</h2>`);
+    });
 });

@@ -6,8 +6,7 @@ const header=document.querySelector('.header') as HTMLElement;
 const root=document.getElementById('root') as HTMLElement;
 const footer=document.getElementById('footer') as HTMLElement;
 
-router.on(/.*/, createLogger(header,"/.*"), createImage(root,"/.*"), leftPage(footer,"/.*"));
-//router.on(/.*/, createLogger(header), createImage(root), leftPage(footer,"/.*"));
+router.on(/\//, createLogger(header,""), createImage(root,""), leftPage(footer,""));
 
 router.on(
     (path: string) => path === "/contacts",
@@ -31,12 +30,6 @@ router.on(
 );
 
 (document.querySelector('body') as HTMLElement).addEventListener("click", (event) => {
-    console.log('event=', event);
-    // const el=event.target;
-    // if (!el.matches("a")) {
-    //     return;
-    // }
-
     if (event !== null && event.target !== null) {
         const element = event.target as Element;
 
@@ -44,13 +37,8 @@ router.on(
             return;
         };
         
-        const url = element.getAttribute("href") as string;
-        console.log(url);
+        const url = element.getAttribute("href") as string;        
         router.go(url);
     }
     event.preventDefault();
-    
-    // let url = event.target.getAttribute("href");
-    // router.go(url);
-    //unsubscribe();
 });  

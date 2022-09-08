@@ -1,58 +1,54 @@
 import { Router } from "./router";
 import { createLogger, createImage, leftPage } from "./utils";
-import { Listener } from "./types"
-// const unmockedFetch = global.fetch;
 
 describe("public interface", () => {
     const router = Router();
+    const unmockedFetch = global.fetch;
 
-    // beforeEach(() => {
-    //     global.fetch = () =>
-    //         Promise.resolve({
-    //             json: () =>
-    //                 Promise.resolve(
-    //                     {
-    //                         file: ''
-    //                     }
-    //                 ),
-    //             status: 200,
-    //         });
-    // });
+    beforeEach(() => {
+        function mockResponse() {
+            return new Promise((resolve) => {
+                resolve({
+                    ok: true,
+                    status: 200,
+                    json: () => {
+                        return {file:"https:\/\/purr.objects-us-east-1.dream.io\/i\/win_20150714_153831.jpg"};
+                    },
+                });
+            });
+        };
+        global.fetch = jest.fn().mockImplementation(mockResponse);
+    });
 
-    // afterEach(() => {
-    //     global.fetch = unmockedFetch;
-    // });
+    afterEach(() => {
+        global.fetch = unmockedFetch;
+    });
+
 
     it("is a function", () => {
         expect(router).toBeInstanceOf(Object);
     });
 
-
-    it("", () => {
-        // const body=document.createElement("body");
+    it("check router on and go", () => {        
         const root = document.createElement('article');
         root.id = 'root';
         let header = document.createElement("header");
         header.className = 'header';
         let footer = document.createElement('footer');
         footer.id = 'footer';
-        const fn=jest.fn();
 
-        // body.appendChild(header);
-        let currentPath: string = location.pathname;
-        let previousPath: string | null = null;
         let listeners = router.on(
             (path: string) => path === "/contacts",
-            createLogger(header, "/contacts"),
-            //jest.fn(),
-            createImage(root, "/contacts"), // onEnter
-            //jest.fn(),
-            leftPage(footer, "/contacts") // onLeave
-            //jest.fn()
+            createLogger(header, "/contacts"),            
+            createImage(root, "/contacts"), // onEnter            
+            leftPage(footer, "/contacts") // onLeave            
         );
-
-        // console.log('listener=',listeners());
+        
         expect(listeners()).toBeInstanceOf(Object);
         expect(listeners().length).toBe(1);
+
+        router.go("/contacts");
+        expect(location.pathname).toEqual("/contacts");
+        expect(listeners).toBeCalled;
     });
 });

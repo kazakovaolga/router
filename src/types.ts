@@ -13,8 +13,3 @@ export type Listener ={
     //onLeave(content: string):void 
     onLeave(el: HTMLElement, content: string):void
 };
-
-// export type myRouter= {
-//     on(match:Function|string|RegExp , onBeforeEnter:(content: string)=>void, onEnter:(content: string)=>void, onLeave):Listener[],
-//     go(url:string, state?:any):void
-// };

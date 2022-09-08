@@ -1,4 +1,4 @@
-import { Listener,Content } from "./types"
+import { Listener} from "./types"
 
 // IMPLEMENTATION
 export function Router() {
@@ -16,8 +16,7 @@ export function Router() {
 
     onBeforeEnter && await onBeforeEnter(args);
     onEnter && isMatch(match, currentPath) && await onEnter(args);
-    onLeave && isMatch(match, previousPath) && await onLeave(args);
-    // isMatch(match, currentPath) && onEnter(args);
+    onLeave && isMatch(match, previousPath) && await onLeave(args);    
   };
 
   const handleAllListeners = () => listeners.forEach(handleListener);
@@ -34,10 +33,8 @@ export function Router() {
     return id;
   };
 
-  //  const on = (match:Function|string|RegExp , onBeforeEnter:(content: string)=>void, onEnter:(content: string)=>void, onLeave) => {
   const on = (match: Function | string | RegExp, onBeforeEnter, onEnter, onLeave) => {
     const id = generateId();
-
     const listener = { id, match, onBeforeEnter, onEnter, onLeave };
     listeners.push(listener);
     handleListener(listener);
@@ -51,11 +48,9 @@ export function Router() {
     previousPath = currentPath;
     history.pushState(state, url, url);
     currentPath = location.pathname;
-
     handleAllListeners();
   };
 
   window.addEventListener("popstate", handleAllListeners);
-
   return { on, go };
 }
